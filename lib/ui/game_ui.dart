@@ -10,7 +10,7 @@ class TicTacToeGame extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Tic Tac Toe'),
+        title: const Text('Tic Tac Toe'),
       ),
       body: Consumer<TicTacToeViewModel>(
         builder: (context, viewModel, child) {
@@ -19,44 +19,52 @@ class TicTacToeGame extends StatelessWidget {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                width: 300,
-                height: 300,
-                child: Stack(
-                  children: [
-                    GridView.builder(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        childAspectRatio: 1.0,
-                        crossAxisSpacing: 4.0,
-                        mainAxisSpacing: 4.0,
+              Align(
+                child: Container(
+                  alignment: FractionalOffset.center,
+                  width: 300,
+                  height: 300,
+                  child: Stack(
+                    children: [
+                      GridView.builder(
+                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          childAspectRatio: 1.0,
+                          crossAxisSpacing: 4.0,
+                          mainAxisSpacing: 4.0,
+                        ),
+                        itemCount: 9,
+                        itemBuilder: (context, index) {
+                          final row = index ~/ 3;
+                          final col = index % 3;
+                          return TicTacToeCell(
+                            symbol: gameState.board[row][col],
+                            onTap: () => viewModel.makeMove(row, col),
+                          );
+                        },
                       ),
-                      itemCount: 9,
-                      itemBuilder: (context, index) {
-                        final row = index ~/ 3;
-                        final col = index % 3;
-                        return TicTacToeCell(
-                          symbol: gameState.board[row][col],
-                          onTap: () => viewModel.makeMove(row, col),
-                        );
-                      },
-                    ),
-                    if (gameState.winner != null)
-                      WinnerLine(winningLine: gameState.winningLine!),
-                  ],
+                      if (gameState.winner != null)
+                        WinnerLine(winningLine: gameState.winningLine!),
+                    ],
+                  ),
                 ),
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               if (gameState.winner != null)
                 Text(
                   'Winner: ${gameState.winner}',
-                  style: TextStyle(fontSize: 24),
+                  style: const TextStyle(fontSize: 24),
                 )
               else
                 Text(
                   'Current Player: ${gameState.currentPlayer}',
-                  style: TextStyle(fontSize: 24),
+                  style: const TextStyle(fontSize: 24),
                 ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () => viewModel.resetGame(),
+                child: Text('Reset Game'),
+              ),
             ],
           );
         },
@@ -69,7 +77,7 @@ class TicTacToeCell extends StatelessWidget {
   final String symbol;
   final VoidCallback onTap;
 
-  const TicTacToeCell({required this.symbol, required this.onTap});
+  const TicTacToeCell({super.key, required this.symbol, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
