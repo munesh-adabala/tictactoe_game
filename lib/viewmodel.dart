@@ -42,18 +42,28 @@ class TicTacToeViewModel extends ChangeNotifier {
       newBoard[row][col] = _gameState.currentPlayer;
       final nextPlayer = _gameState.currentPlayer == "X" ? "O" : "X";
 
+      _gameState.board = newBoard;
+      notifyListeners();
+
       final winnerResult = _checkWinner(newBoard);
       if (winnerResult != null) {
         _gameState.winner = _gameState.currentPlayer;
         _gameState.winningLine = winnerResult;
       } else {
         _gameState.currentPlayer = nextPlayer;
-        _gameState.board = newBoard;
       }
 
       await _writeGameStateToFile(_gameState);
       notifyListeners();
     }
+  }
+
+  void resetGame() {
+    _gameState = GameState(
+      board: List.generate(3, (_) => List.generate(3, (_) => "")),
+      currentPlayer: "X",
+    );
+    notifyListeners();
   }
 
   List<int>? _checkWinner(List<List<String>> board) {
