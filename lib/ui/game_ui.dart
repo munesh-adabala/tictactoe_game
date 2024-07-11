@@ -1,16 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:tic_tac_toe/ui/tictactoe_cell.dart';
+import 'package:tic_tac_toe/ui/winner_screen.dart';
 
 import '../viewmodel.dart';
 
 class TicTacToeGame extends StatelessWidget {
   const TicTacToeGame({super.key});
 
+  void navigateToCelebrationScreen(BuildContext context, String winner) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => CelebrationScreen(winner: winner),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tic Tac Toe'),
+        title: const Text('Tic Tac Toe',
+            style: TextStyle(
+                fontSize: 20,
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 0.5)),
       ),
       body: Consumer<TicTacToeViewModel>(
         builder: (context, viewModel, child) {
@@ -27,7 +43,8 @@ class TicTacToeGame extends StatelessWidget {
                   child: Stack(
                     children: [
                       GridView.builder(
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 3,
                           childAspectRatio: 1.0,
                           crossAxisSpacing: 4.0,
@@ -39,7 +56,7 @@ class TicTacToeGame extends StatelessWidget {
                           final col = index % 3;
                           return TicTacToeCell(
                             symbol: gameState.board[row][col],
-                            onTap: () => viewModel.makeMove(row, col),
+                            onTap: () => viewModel.makeMove(row, col, context),
                           );
                         },
                       ),
@@ -63,7 +80,18 @@ class TicTacToeGame extends StatelessWidget {
               const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => viewModel.resetGame(),
-                child: Text('Reset Game'),
+                style: ElevatedButton.styleFrom(
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.deepPurple,
+                  // Text color
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12), // Rounded corners
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                  elevation: 10,
+                  shadowColor: Colors.deepPurpleAccent,
+                ),
+                child: const Text('Reset Game'),
               ),
             ],
           );
@@ -73,31 +101,6 @@ class TicTacToeGame extends StatelessWidget {
   }
 }
 
-class TicTacToeCell extends StatelessWidget {
-  final String symbol;
-  final VoidCallback onTap;
-
-  const TicTacToeCell({super.key, required this.symbol, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.grey[300],
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Center(
-          child: Text(
-            symbol,
-            style: TextStyle(fontSize: 36),
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class WinnerLine extends StatefulWidget {
   final List<int> winningLine;
@@ -108,7 +111,8 @@ class WinnerLine extends StatefulWidget {
   _WinnerLineState createState() => _WinnerLineState();
 }
 
-class _WinnerLineState extends State<WinnerLine> with SingleTickerProviderStateMixin {
+class _WinnerLineState extends State<WinnerLine>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -146,7 +150,7 @@ class _WinnerLineState extends State<WinnerLine> with SingleTickerProviderStateM
       left: 0,
       top: 0,
       child: CustomPaint(
-        size: Size(300, 300),
+        size: const Size(300, 300),
         painter: LinePainter(
           startX: startX.toDouble(),
           startY: startY.toDouble(),
@@ -164,7 +168,11 @@ class LinePainter extends CustomPainter {
   final double endX;
   final double endY;
 
-  LinePainter({required this.startX, required this.startY, required this.endX, required this.endY});
+  LinePainter(
+      {required this.startX,
+      required this.startY,
+      required this.endX,
+      required this.endY});
 
   @override
   void paint(Canvas canvas, Size size) {

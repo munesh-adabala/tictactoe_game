@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
+import 'package:tic_tac_toe/ui/winner_screen.dart';
 import 'dart:io';
 
 import 'game_state.dart';
@@ -36,7 +37,7 @@ class TicTacToeViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> makeMove(int row, int col) async {
+  Future<void> makeMove(int row, int col, BuildContext context) async {
     if (_gameState.board[row][col].isEmpty && _gameState.winner == null) {
       final newBoard = _gameState.board.map((list) => List<String>.from(list)).toList();
       newBoard[row][col] = _gameState.currentPlayer;
@@ -49,6 +50,14 @@ class TicTacToeViewModel extends ChangeNotifier {
       if (winnerResult != null) {
         _gameState.winner = _gameState.currentPlayer;
         _gameState.winningLine = winnerResult;
+
+        Future.delayed(Duration(seconds: 1), () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => CelebrationScreen(winner: "Munesh with ${_gameState.winner}"),
+            ),
+          );
+        });
       } else {
         _gameState.currentPlayer = nextPlayer;
       }
