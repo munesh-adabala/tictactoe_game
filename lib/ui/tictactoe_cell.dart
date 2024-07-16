@@ -12,7 +12,7 @@ class TicTacToeCell extends StatefulWidget {
     super.key,
     required this.symbol,
     required this.onTap,
-    this.backgroundColor = Colors.lightBlueAccent,
+    this.backgroundColor = const Color(0xFFB3E5FC),
     this.borderColor = Colors.black,
     this.borderRadius = 8.0,
     this.fontSize = 36.0,

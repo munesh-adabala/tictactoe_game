@@ -1,21 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:tic_tac_toe/ui/tictactoe_cell.dart';
-import 'package:tic_tac_toe/ui/winner_screen.dart';
+import 'package:tic_tac_toe/ui/toggle_button_widget.dart';
 
+import '../game_state.dart';
 import '../viewmodel.dart';
 
 class TicTacToeGame extends StatelessWidget {
   const TicTacToeGame({super.key});
-
-  void navigateToCelebrationScreen(BuildContext context, String winner) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => CelebrationScreen(winner: winner),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,8 +25,27 @@ class TicTacToeGame extends StatelessWidget {
           final gameState = viewModel.gameState;
 
           return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text("Online: ",
+                      style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 0.5)),
+                  ToggleButton(
+                    onToggle: (isOn) {
+                      if (isOn) {
+                        viewModel.setGameMode(GameMode.online);
+                      } else {
+                        viewModel.setGameMode(GameMode.local);
+                      }
+                    },
+                  ),
+                ],
+              ),
               Align(
                 child: Container(
                   alignment: FractionalOffset.center,
@@ -67,17 +78,23 @@ class TicTacToeGame extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16),
-              if (gameState.winner != null)
+              if (gameState.winner != null) ...[
                 Text(
                   'Winner: ${gameState.winner}',
-                  style: const TextStyle(fontSize: 24),
-                )
-              else
-                Text(
-                  'Current Player: ${gameState.currentPlayer}',
-                  style: const TextStyle(fontSize: 24),
+                  style: TextStyle(fontSize: 24),
                 ),
-              const SizedBox(height: 16),
+              ] else if (gameState.currentPlayer == "X") ...[
+                Text(
+                  'Current Player: X',
+                  style: TextStyle(fontSize: 24),
+                ),
+              ] else if (gameState.currentPlayer == "O") ...[
+                Text(
+                  'Current Player: O',
+                  style: TextStyle(fontSize: 24),
+                ),
+              ],
+              SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () => viewModel.resetGame(),
                 style: ElevatedButton.styleFrom(
@@ -91,8 +108,9 @@ class TicTacToeGame extends StatelessWidget {
                   elevation: 10,
                   shadowColor: Colors.deepPurpleAccent,
                 ),
-                child: const Text('Reset Game'),
+                child: Text('Reset Game'),
               ),
+              SizedBox(height: 16),
             ],
           );
         },
@@ -101,11 +119,10 @@ class TicTacToeGame extends StatelessWidget {
   }
 }
 
-
 class WinnerLine extends StatefulWidget {
   final List<int> winningLine;
 
-  const WinnerLine({required this.winningLine});
+  const WinnerLine({super.key, required this.winningLine});
 
   @override
   _WinnerLineState createState() => _WinnerLineState();
