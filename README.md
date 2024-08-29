@@ -1,6 +1,6 @@
 # tic_tac_toe
 
-A new Flutter project.
+A new Flutter project With Simple tic tac toe game with backend. It supports both online and offline. Supported platforms are Android and iOS.
 
 ## Getting Started
 
