@@ -1,5 +1,5 @@
 enum GameMode { local, online }
-
+//This is game state
 class GameState {
   List<List<String>> board;
   String currentPlayer;
